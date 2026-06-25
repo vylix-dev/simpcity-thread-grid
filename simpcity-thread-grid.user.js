@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.0.0
+// @version      9.0.1
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -53,6 +53,8 @@
   });
 
   const CSS = String.raw`
+    @import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap");
+
     :root {
       --scg-card-min: 220px;
       --scg-gap: 10px;
@@ -291,34 +293,73 @@
     }
 
     .scg-settings-link {
-      display: flex !important;
+      position: relative !important;
+      display: inline-flex !important;
       align-items: center !important;
+      justify-content: center !important;
+      width: 42px !important;
+      min-width: 42px !important;
+      height: 42px !important;
+      min-height: 42px !important;
+      margin: 0 2px !important;
+      padding: 0 !important;
+      color: #f2f2f0 !important;
+      text-decoration: none !important;
       cursor: pointer !important;
-      color: #7c8cf8 !important;
-      transition: color 150ms ease, transform 150ms ease !important;
+      isolation: isolate !important;
+      transition: color 120ms ease, transform 120ms ease !important;
     }
 
     .scg-settings-link:hover,
     .scg-settings-link:focus-visible {
-      color: #a5b0ff !important;
-      transform: rotate(30deg) !important;
+      color: #fff !important;
+      transform: translateY(-1px) !important;
       outline: none !important;
     }
 
     .scg-settings-link i {
+      position: relative !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      width: 30px !important;
-      height: 30px !important;
-      border-radius: 50% !important;
-      background: rgba(124, 140, 248, 0.15) !important;
-      transition: background 150ms ease !important;
+      width: 31px !important;
+      height: 31px !important;
+      border: 1px solid rgba(255, 255, 255, 0.13) !important;
+      border-radius: 10px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.58) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 20px rgba(0, 0, 0, 0.24) !important;
+      color: #ff4d4d !important;
+      transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease, color 120ms ease !important;
+    }
+
+    .scg-settings-link i::after {
+      content: "" !important;
+      position: absolute !important;
+      top: 5px !important;
+      right: 5px !important;
+      width: 5px !important;
+      height: 5px !important;
+      border-radius: 999px !important;
+      background: #ff4d4d !important;
+      box-shadow: 0 0 10px rgba(255, 77, 77, 0.55) !important;
+    }
+
+    .scg-settings-link svg {
+      width: 16px !important;
+      height: 16px !important;
+      filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.16)) !important;
     }
 
     .scg-settings-link:hover i,
     .scg-settings-link:focus-visible i {
-      background: rgba(124, 140, 248, 0.28) !important;
+      border-color: rgba(255, 77, 77, 0.58) !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0)),
+        rgba(255, 77, 77, 0.16) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 0 0 3px rgba(255, 77, 77, 0.08), 0 10px 24px rgba(0, 0, 0, 0.28) !important;
+      color: #ff6666 !important;
     }
 
     .scg-settings-link .p-navgroup-linkText {
@@ -332,10 +373,23 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      padding: 16px !important;
-      background: rgba(0, 0, 0, 0.62) !important;
-      backdrop-filter: blur(4px) !important;
+      padding: 18px !important;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.58) 48%, rgba(0, 0, 0, 0.82)),
+        radial-gradient(circle at 50% 34%, rgba(255, 77, 77, 0.07), rgba(0, 0, 0, 0.72) 68%, rgba(0, 0, 0, 0.94)) !important;
+      backdrop-filter: blur(5px) !important;
       animation: scg-fade-in 150ms ease !important;
+    }
+
+    .scg-overlay::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      pointer-events: none !important;
+      opacity: 0.18 !important;
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.26) 1px, transparent 1px) !important;
+      background-size: 8px 8px !important;
+      mix-blend-mode: screen !important;
     }
 
     @keyframes scg-fade-in {
@@ -344,70 +398,126 @@
     }
 
     .scg-modal {
-      width: 390px !important;
+      position: relative !important;
+      z-index: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      width: 430px !important;
       max-width: 96vw !important;
       max-height: 90vh !important;
-      overflow-y: auto !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 14px !important;
-      background: #16162a !important;
-      color: #dde0f0 !important;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8) !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-      font-size: 14px !important;
-      animation: scg-pop 200ms cubic-bezier(0.34, 1.26, 0.64, 1) !important;
+      overflow: hidden !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      border-radius: 10px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.9) !important;
+      color: #f2f2f0 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 26px 80px rgba(0, 0, 0, 0.84), 0 0 44px rgba(255, 77, 77, 0.08) !important;
+      backdrop-filter: blur(8px) !important;
+      font-family: Rajdhani, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-size: 15px !important;
+      line-height: 1.4 !important;
+      text-shadow: 0 1px 2px #000 !important;
+      animation: scg-pop 180ms cubic-bezier(0.2, 1.4, 0.4, 1) !important;
     }
 
     @keyframes scg-pop {
-      from { transform: scale(0.88); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from { transform: translateY(8px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
     }
 
     .scg-modal-header {
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
+      gap: 14px !important;
+      padding: 18px 18px 14px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+    }
+
+    .scg-modal-title {
+      display: flex !important;
+      align-items: center !important;
+      min-width: 0 !important;
       gap: 12px !important;
-      padding: 15px 18px 12px !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .scg-modal-mark {
+      flex: 0 0 auto !important;
+      color: #ff4d4d !important;
+      font-family: Teko, Rajdhani, sans-serif !important;
+      font-size: 44px !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.03em !important;
+      line-height: 0.78 !important;
+      text-shadow: 0 0 18px rgba(255, 77, 77, 0.22), 0 1px 2px #000 !important;
+    }
+
+    .scg-modal-kicker {
+      display: block !important;
+      margin: 0 0 3px !important;
+      color: #aaa8a8 !important;
+      font-size: 11px !important;
       font-weight: 700 !important;
-      font-size: 15px !important;
+      letter-spacing: 0.16em !important;
+      line-height: 1 !important;
+      text-transform: uppercase !important;
+    }
+
+    .scg-modal-title h2 {
+      margin: 0 !important;
+      color: #f2f2f0 !important;
+      font-family: Teko, Rajdhani, sans-serif !important;
+      font-size: 32px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.015em !important;
+      line-height: 0.9 !important;
+      text-transform: uppercase !important;
     }
 
     .scg-modal-close {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      width: 28px !important;
-      height: 28px !important;
+      width: 31px !important;
+      height: 31px !important;
       padding: 0 !important;
-      border: none !important;
-      border-radius: 50% !important;
-      background: rgba(255, 255, 255, 0.09) !important;
-      color: #bbb !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: 8px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.58) !important;
+      color: #aaa8a8 !important;
       cursor: pointer !important;
-      font-size: 16px !important;
+      font-size: 20px !important;
       line-height: 1 !important;
-      transition: background 120ms ease, color 120ms ease !important;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease !important;
     }
 
     .scg-modal-close:hover,
     .scg-modal-close:focus-visible {
-      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 77, 77, 0.58) !important;
+      background: rgba(255, 77, 77, 0.16) !important;
       color: #fff !important;
       outline: none !important;
     }
 
     .scg-modal-body {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      max-height: min(64vh, 620px) !important;
+      overflow-y: auto !important;
       padding: 14px 18px !important;
+      scrollbar-color: rgba(255, 77, 77, 0.45) rgba(255, 255, 255, 0.06) !important;
     }
 
     .scg-section-title {
-      margin: 18px 0 9px !important;
-      color: rgba(255, 255, 255, 0.36) !important;
-      font-size: 10px !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.12em !important;
+      margin: 19px 0 9px !important;
+      color: #aaa8a8 !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.16em !important;
+      line-height: 1 !important;
       text-transform: uppercase !important;
     }
 
@@ -416,64 +526,79 @@
     }
 
     .scg-row {
-      display: flex !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto auto !important;
       align-items: center !important;
-      justify-content: space-between !important;
       gap: 10px !important;
-      margin-bottom: 11px !important;
+      min-height: 43px !important;
+      margin-bottom: 8px !important;
+      padding: 10px 11px !important;
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+      border-radius: 8px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.58) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 10px 28px rgba(0, 0, 0, 0.18) !important;
     }
 
     .scg-label {
-      flex: 1 1 auto !important;
-      color: rgba(255, 255, 255, 0.85) !important;
-      font-size: 13px !important;
+      min-width: 0 !important;
+      color: #f2f2f0 !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
     }
 
     .scg-value {
-      min-width: 44px !important;
-      color: rgba(255, 255, 255, 0.46) !important;
+      min-width: 48px !important;
+      color: #777575 !important;
       text-align: right !important;
       font-size: 12px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
       font-variant-numeric: tabular-nums !important;
     }
 
     .scg-range {
-      flex: 0 0 130px !important;
-      width: 130px !important;
+      flex: 0 0 auto !important;
+      width: 128px !important;
       height: 4px !important;
-      border-radius: 2px !important;
+      border-radius: 999px !important;
       background: rgba(255, 255, 255, 0.13) !important;
       cursor: pointer !important;
       outline: none !important;
       appearance: none !important;
       -webkit-appearance: none !important;
+      accent-color: #ff4d4d !important;
     }
 
     .scg-range::-webkit-slider-thumb {
-      width: 14px !important;
-      height: 14px !important;
+      width: 16px !important;
+      height: 16px !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
       border-radius: 50% !important;
-      background: #7c8cf8 !important;
+      background: #ff4d4d !important;
       cursor: pointer !important;
-      box-shadow: 0 0 0 3px rgba(124, 140, 248, 0.28) !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.14), 0 0 14px rgba(255, 77, 77, 0.18) !important;
       appearance: none !important;
       -webkit-appearance: none !important;
     }
 
     .scg-range::-moz-range-thumb {
-      width: 14px !important;
-      height: 14px !important;
-      border: none !important;
+      width: 16px !important;
+      height: 16px !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
       border-radius: 50% !important;
-      background: #7c8cf8 !important;
+      background: #ff4d4d !important;
       cursor: pointer !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.14), 0 0 14px rgba(255, 77, 77, 0.18) !important;
     }
 
     .scg-toggle {
       position: relative !important;
-      flex: 0 0 38px !important;
-      width: 38px !important;
-      height: 21px !important;
+      flex: 0 0 42px !important;
+      width: 42px !important;
+      height: 23px !important;
     }
 
     .scg-toggle input {
@@ -487,51 +612,61 @@
     .scg-toggle-track {
       position: absolute !important;
       inset: 0 !important;
-      border-radius: 11px !important;
-      background: rgba(255, 255, 255, 0.12) !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      border-radius: 999px !important;
+      background: rgba(0, 0, 0, 0.4) !important;
       cursor: pointer !important;
-      transition: background 180ms ease !important;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease !important;
     }
 
     .scg-toggle-track::after {
       content: "" !important;
       position: absolute !important;
-      top: 2.5px !important;
-      left: 2.5px !important;
-      width: 16px !important;
-      height: 16px !important;
+      top: 2px !important;
+      left: 2px !important;
+      width: 17px !important;
+      height: 17px !important;
       border-radius: 50% !important;
-      background: #fff !important;
-      transition: transform 180ms ease !important;
+      background: #aaa8a8 !important;
+      transition: transform 160ms ease, background 160ms ease !important;
     }
 
     .scg-toggle input:checked ~ .scg-toggle-track {
-      background: #7c8cf8 !important;
-    }
-
-    .scg-toggle input:focus-visible ~ .scg-toggle-track {
-      box-shadow: 0 0 0 3px rgba(124, 140, 248, 0.35) !important;
+      border-color: #ff4d4d !important;
+      background: rgba(255, 77, 77, 0.18) !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.09), 0 0 14px rgba(255, 77, 77, 0.18) !important;
     }
 
     .scg-toggle input:checked ~ .scg-toggle-track::after {
-      transform: translateX(17px) !important;
+      transform: translateX(19px) !important;
+      background: #ff4d4d !important;
+    }
+
+    .scg-toggle input:focus-visible ~ .scg-toggle-track,
+    .scg-select:focus-visible,
+    .scg-range:focus-visible {
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.18) !important;
     }
 
     .scg-select {
-      min-width: 116px !important;
-      padding: 4px 8px !important;
-      border: 1px solid rgba(255, 255, 255, 0.13) !important;
-      border-radius: 6px !important;
-      background: rgba(255, 255, 255, 0.07) !important;
-      color: #dde0f0 !important;
+      min-width: 118px !important;
+      padding: 7px 9px !important;
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+      border-radius: 8px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.58) !important;
+      color: #f2f2f0 !important;
       cursor: pointer !important;
-      font-size: 12px !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
       outline: none !important;
     }
 
-    .scg-select:focus-visible,
-    .scg-range:focus-visible {
-      box-shadow: 0 0 0 3px rgba(124, 140, 248, 0.35) !important;
+    .scg-select option {
+      background: #111114 !important;
+      color: #f2f2f0 !important;
     }
 
     .scg-modal-footer {
@@ -539,37 +674,57 @@
       justify-content: flex-end !important;
       gap: 8px !important;
       padding: 12px 18px 16px !important;
-      border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
     }
 
     .scg-button {
-      padding: 7px 16px !important;
-      border: none !important;
+      min-height: 38px !important;
+      padding: 9px 12px !important;
       border-radius: 8px !important;
       cursor: pointer !important;
-      font-size: 13px !important;
+      font-size: 14px !important;
       font-weight: 600 !important;
-      transition: opacity 120ms ease, transform 100ms ease !important;
+      line-height: 1 !important;
+      text-align: center !important;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease, transform 100ms ease !important;
     }
 
     .scg-button:hover,
     .scg-button:focus-visible {
-      opacity: 0.84 !important;
       outline: none !important;
+      transform: translateY(-1px) !important;
     }
 
     .scg-button:active {
-      transform: scale(0.96) !important;
+      transform: scale(0.98) !important;
     }
 
     .scg-button-ghost {
-      background: rgba(255, 255, 255, 0.1) !important;
-      color: #ccc !important;
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+        rgba(12, 12, 14, 0.58) !important;
+      color: #f2f2f0 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 10px 28px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .scg-button-ghost:hover,
+    .scg-button-ghost:focus-visible {
+      border-color: rgba(255, 255, 255, 0.14) !important;
+      background: rgba(24, 24, 28, 0.72) !important;
     }
 
     .scg-button-primary {
-      background: #7c8cf8 !important;
+      border: 1px solid rgba(255, 77, 77, 0.5) !important;
+      background: rgba(255, 77, 77, 0.14) !important;
       color: #fff !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 24px rgba(255, 77, 77, 0.08) !important;
+    }
+
+    .scg-button-primary:hover,
+    .scg-button-primary:focus-visible {
+      border-color: rgba(255, 102, 102, 0.72) !important;
+      background: rgba(255, 77, 77, 0.24) !important;
     }
 
     @media (max-width: 620px) {
@@ -577,19 +732,30 @@
         width: 100% !important;
       }
 
+      .scg-modal-header {
+        padding: 16px 14px 12px !important;
+      }
+
+      .scg-modal-body {
+        padding: 12px 14px !important;
+      }
+
       .scg-row {
-        align-items: flex-start !important;
-        flex-wrap: wrap !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
       }
 
       .scg-range {
-        flex-basis: 100% !important;
+        grid-column: 1 / -1 !important;
         width: 100% !important;
-        order: 2 !important;
       }
 
-      .scg-value {
-        order: 1 !important;
+      .scg-modal-footer {
+        flex-wrap: wrap !important;
+        padding-inline: 14px !important;
+      }
+
+      .scg-button {
+        flex: 1 1 120px !important;
       }
     }
 
@@ -833,7 +999,9 @@
     if (document.querySelector('.scg-settings-link')) return;
 
     const discovery = document.querySelector('.p-navgroup.p-discovery');
-    if (!discovery) return;
+    const account = document.querySelector('.p-navgroup.p-account');
+    const host = discovery || account;
+    if (!host) return;
 
     const button = createElement('a', {
       href: '#',
@@ -853,8 +1021,12 @@
     const text = createElement('span', { className: 'p-navgroup-linkText', textContent: 'Grid Settings' });
     button.append(iconWrap, text);
 
-    const searchLink = discovery.querySelector('.p-navgroup-link--search');
-    discovery.insertBefore(button, searchLink || null);
+    const searchLink = discovery?.querySelector('.p-navgroup-link--search');
+    if (discovery) {
+      discovery.insertBefore(button, searchLink || null);
+    } else {
+      host.appendChild(button);
+    }
   }
 
   function formatSettingValue(key, value) {
@@ -991,7 +1163,13 @@
       },
     });
 
-    const title = createElement('span', { id: titleId, textContent: 'Grid Settings' });
+    const title = createElement('div', { className: 'scg-modal-title' }, [
+      createElement('span', { className: 'scg-modal-mark', textContent: 'SC' }),
+      createElement('div', {}, [
+        createElement('span', { className: 'scg-modal-kicker', textContent: 'Thread Grid' }),
+        createElement('h2', { id: titleId, textContent: 'Grid Settings' }),
+      ]),
+    ]);
     const closeButton = createElement('button', {
       type: 'button',
       className: 'scg-modal-close',
