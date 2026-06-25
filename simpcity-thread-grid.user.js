@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.0.1
+// @version      9.1.0
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -38,12 +38,15 @@
     cardMinWidth: 220,
     gap: 10,
     titleLines: 2,
+    thumbnailFit: 'cover',
     showPageNums: false,
     showLatest: false,
     hoverAnim: true,
     sidebarGrid: true,
     sidebarMinWidth: 120,
   });
+
+  const THUMBNAIL_FIT_VALUES = Object.freeze(['cover', 'contain']);
 
   const LIMITS = Object.freeze({
     cardMinWidth: [140, 500],
@@ -110,8 +113,10 @@
       flex-shrink: 0 !important;
       overflow: hidden !important;
       border-radius: 0 !important;
+      background-color: rgba(0, 0, 0, 0.28) !important;
       background-size: cover !important;
       background-position: center center !important;
+      background-repeat: no-repeat !important;
     }
 
     body.scg-enabled a.dcThumbnail img,
@@ -124,6 +129,28 @@
       object-position: -99999px -99999px !important;
       background-size: cover !important;
       background-position: center center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    body.scg-thumb-contain a.dcThumbnail {
+      background-size: contain !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    body.scg-thumb-contain a.dcThumbnail::before,
+    body.scg-thumb-contain a.dcThumbnail::after {
+      display: none !important;
+      padding: 0 !important;
+      content: none !important;
+    }
+
+    body.scg-thumb-contain a.dcThumbnail img {
+      object-fit: contain !important;
+      object-position: center center !important;
+      background-size: contain !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
     }
 
     body.scg-enabled .structItem-cell--main {
@@ -795,6 +822,10 @@
     return typeof value === 'boolean' ? value : fallback;
   }
 
+  function toChoice(value, allowed, fallback) {
+    return allowed.includes(value) ? value : fallback;
+  }
+
   function toInt(value, min, max, fallback) {
     const numeric = Number(value);
     if (!Number.isFinite(numeric)) return fallback;
@@ -808,6 +839,7 @@
       cardMinWidth: toInt(source.cardMinWidth, ...LIMITS.cardMinWidth, DEFAULT_SETTINGS.cardMinWidth),
       gap: toInt(source.gap, ...LIMITS.gap, DEFAULT_SETTINGS.gap),
       titleLines: toInt(source.titleLines, ...LIMITS.titleLines, DEFAULT_SETTINGS.titleLines),
+      thumbnailFit: toChoice(source.thumbnailFit, THUMBNAIL_FIT_VALUES, DEFAULT_SETTINGS.thumbnailFit),
       showPageNums: toBool(source.showPageNums, DEFAULT_SETTINGS.showPageNums),
       showLatest: toBool(source.showLatest, DEFAULT_SETTINGS.showLatest),
       hoverAnim: toBool(source.hoverAnim, DEFAULT_SETTINGS.hoverAnim),
@@ -923,6 +955,7 @@
     body.classList.toggle('scg-show-latest', normalized.showLatest);
     body.classList.toggle('scg-sidebar-enabled', normalized.enabled && normalized.sidebarGrid);
     body.classList.toggle('scg-title-unlimited', normalized.titleLines >= 99);
+    body.classList.toggle('scg-thumb-contain', normalized.thumbnailFit === 'contain');
   }
 
   function createElement(tagName, props = {}, children = []) {
@@ -1098,6 +1131,26 @@
     ]);
   }
 
+  function createThumbnailFitRow(draft) {
+    const select = createElement('select', {
+      className: 'scg-select',
+      value: draft.thumbnailFit,
+      dataset: { scgKey: 'thumbnailFit', scgType: 'string' },
+    });
+
+    [
+      ['cover', 'Crop to fill'],
+      ['contain', 'Show full image'],
+    ].forEach(([value, text]) => {
+      select.appendChild(createElement('option', { value, textContent: text, selected: value === draft.thumbnailFit }));
+    });
+
+    return createElement('div', { className: 'scg-row' }, [
+      createElement('span', { className: 'scg-label', textContent: 'Thumbnail Fit' }),
+      select,
+    ]);
+  }
+
   function updateModalControls(overlay, draft) {
     overlay.querySelectorAll('[data-scg-key]').forEach((control) => {
       const key = control.dataset.scgKey;
@@ -1185,6 +1238,9 @@
       createRangeRow('Card Gap', 'gap', draft, LIMITS.gap[0], LIMITS.gap[1], 2),
       createTitleLinesRow(draft),
 
+      createSectionTitle('Media'),
+      createThumbnailFitRow(draft),
+
       createSectionTitle('Content'),
       createToggleRow('Show Page Numbers', 'showPageNums', draft),
       createToggleRow('Show Latest Post', 'showLatest', draft),
@@ -1241,7 +1297,14 @@
       if (!control || !overlay.contains(control)) return;
 
       const key = control.dataset.scgKey;
-      const value = control.dataset.scgType === 'bool' ? Boolean(control.checked) : Number(control.value);
+      let value;
+      if (control.dataset.scgType === 'bool') {
+        value = Boolean(control.checked);
+      } else if (control.dataset.scgType === 'string') {
+        value = control.value;
+      } else {
+        value = Number(control.value);
+      }
       draft = normalizeSettings({ ...draft, [key]: value });
       applySettings(draft);
       updateModalControls(overlay, draft);

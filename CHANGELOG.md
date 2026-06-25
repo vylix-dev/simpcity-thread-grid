@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.0] - 2026-06-25
+
+### Added
+- Added a Thumbnail Fit setting so cards can either crop thumbnails to fill or show the full uncropped image.
+
 ## [9.0.1] - 2026-06-25
 
 ### Changed
