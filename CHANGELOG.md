@@ -12,6 +12,14 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.1] - 2026-06-25
+
+### Changed
+- Refined the settings nav button with an isolated custom sliders icon so site icon styles cannot override it.
+
+### Fixed
+- Removed the washed-out overlay in full-image thumbnail mode by rendering thumbnails from a single background image layer.
+
 ## [9.1.0] - 2026-06-25
 
 ### Added

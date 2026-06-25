@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.0
+// @version      9.1.1
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -113,7 +113,7 @@
       flex-shrink: 0 !important;
       overflow: hidden !important;
       border-radius: 0 !important;
-      background-color: rgba(0, 0, 0, 0.28) !important;
+      background-color: #050505 !important;
       background-size: cover !important;
       background-position: center center !important;
       background-repeat: no-repeat !important;
@@ -133,6 +133,7 @@
     }
 
     body.scg-thumb-contain a.dcThumbnail {
+      background-color: #050505 !important;
       background-size: contain !important;
       background-position: center center !important;
       background-repeat: no-repeat !important;
@@ -146,11 +147,10 @@
     }
 
     body.scg-thumb-contain a.dcThumbnail img {
-      object-fit: contain !important;
-      object-position: center center !important;
-      background-size: contain !important;
-      background-position: center center !important;
-      background-repeat: no-repeat !important;
+      object-fit: cover !important;
+      object-position: -99999px -99999px !important;
+      background: transparent !important;
+      opacity: 0 !important;
     }
 
     body.scg-enabled .structItem-cell--main {
@@ -344,49 +344,37 @@
       outline: none !important;
     }
 
-    .scg-settings-link i {
+    .scg-settings-icon {
       position: relative !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
       width: 31px !important;
       height: 31px !important;
-      border: 1px solid rgba(255, 255, 255, 0.13) !important;
-      border-radius: 10px !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: 999px !important;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)),
-        rgba(12, 12, 14, 0.58) !important;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 20px rgba(0, 0, 0, 0.24) !important;
-      color: #ff4d4d !important;
+        rgba(34, 35, 39, 0.92) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+      color: #ff6666 !important;
       transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease, color 120ms ease !important;
     }
 
-    .scg-settings-link i::after {
-      content: "" !important;
-      position: absolute !important;
-      top: 5px !important;
-      right: 5px !important;
-      width: 5px !important;
-      height: 5px !important;
-      border-radius: 999px !important;
-      background: #ff4d4d !important;
-      box-shadow: 0 0 10px rgba(255, 77, 77, 0.55) !important;
-    }
-
     .scg-settings-link svg {
-      width: 16px !important;
-      height: 16px !important;
-      filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.16)) !important;
+      width: 17px !important;
+      height: 17px !important;
+      filter: drop-shadow(0 0 8px rgba(255, 77, 77, 0.14)) !important;
     }
 
-    .scg-settings-link:hover i,
-    .scg-settings-link:focus-visible i {
-      border-color: rgba(255, 77, 77, 0.58) !important;
+    .scg-settings-link:hover .scg-settings-icon,
+    .scg-settings-link:focus-visible .scg-settings-icon {
+      border-color: rgba(255, 77, 77, 0.55) !important;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0)),
-        rgba(255, 77, 77, 0.16) !important;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 0 0 3px rgba(255, 77, 77, 0.08), 0 10px 24px rgba(0, 0, 0, 0.28) !important;
-      color: #ff6666 !important;
+        rgba(45, 31, 34, 0.96) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 0 0 3px rgba(255, 77, 77, 0.08), 0 10px 24px rgba(0, 0, 0, 0.24) !important;
+      color: #ff7a7a !important;
     }
 
     .scg-settings-link .p-navgroup-linkText {
@@ -792,6 +780,7 @@
       .scg-overlay,
       .scg-modal,
       .scg-settings-link,
+      .scg-settings-icon,
       .scg-button,
       .scg-toggle-track,
       .scg-toggle-track::after {
@@ -1019,12 +1008,26 @@
     svg.setAttribute('viewBox', '0 0 24 24');
     svg.setAttribute('width', '16');
     svg.setAttribute('height', '16');
-    svg.setAttribute('fill', 'currentColor');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
     svg.setAttribute('focusable', 'false');
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54C14.46 3.17 14.26 3 14.02 3h-3.84c-.24 0-.44.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.83 9.47c-.12.21-.08.47.12.61l2.03 1.58C4.93 11.86 4.9 12.18 4.9 12.5s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6S10.02 8.4 12 8.4s3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z');
-    svg.appendChild(path);
+    [
+      ['path', { d: 'M4 7h5' }],
+      ['path', { d: 'M15 7h5' }],
+      ['circle', { cx: '12', cy: '7', r: '2' }],
+      ['path', { d: 'M4 17h9' }],
+      ['path', { d: 'M19 17h1' }],
+      ['circle', { cx: '16', cy: '17', r: '2' }],
+    ].forEach(([tag, attrs]) => {
+      const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.entries(attrs).forEach(([name, value]) => node.setAttribute(name, value));
+      svg.appendChild(node);
+    });
+
     return svg;
   }
 
@@ -1038,7 +1041,7 @@
 
     const button = createElement('a', {
       href: '#',
-      className: 'p-navgroup-link p-navgroup-link--iconic scg-settings-link',
+      className: 'p-navgroup-link scg-settings-link',
       title: `${APP.name} settings`,
       attributes: {
         'aria-label': `${APP.name} settings`,
@@ -1050,7 +1053,7 @@
       },
     });
 
-    const iconWrap = createElement('i', { attributes: { 'aria-hidden': 'true' } }, [createSvgIcon()]);
+    const iconWrap = createElement('span', { className: 'scg-settings-icon', attributes: { 'aria-hidden': 'true' } }, [createSvgIcon()]);
     const text = createElement('span', { className: 'p-navgroup-linkText', textContent: 'Grid Settings' });
     button.append(iconWrap, text);
 
@@ -1364,6 +1367,10 @@
     return null;
   }
 
+  function cssUrl(value) {
+    return `url("${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`;
+  }
+
   function parseDimsFromUrl(url) {
     if (!url) return null;
     const match = String(url).match(/(?:^|[^\d])(\d{2,5})x(\d{2,5})(?:[^\d]|$)/i);
@@ -1375,12 +1382,13 @@
     return { width, height };
   }
 
-  function applyRatio(anchor, width = 16, height = 9) {
+  function applyRatio(anchor, width = 16, height = 9, imageUrl = null) {
     const safeWidth = Math.max(1, Number(width) || 16);
     const safeHeight = Math.max(1, Number(height) || 9);
     anchor.style.setProperty('aspect-ratio', `${safeWidth} / ${safeHeight}`, 'important');
     anchor.style.setProperty('width', '100%', 'important');
     anchor.style.setProperty('height', 'auto', 'important');
+    if (imageUrl) anchor.style.setProperty('background-image', cssUrl(imageUrl), 'important');
     anchor.dataset.scgThumb = 'ready';
 
     const container = anchor.parentElement;
@@ -1405,13 +1413,13 @@
     const url = getThumbnailUrl(anchor, image);
 
     if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
-      applyRatio(anchor, image.naturalWidth, image.naturalHeight);
+      applyRatio(anchor, image.naturalWidth, image.naturalHeight, url);
       return;
     }
 
     const parsedDims = parseDimsFromUrl(url);
     if (parsedDims) {
-      applyRatio(anchor, parsedDims.width, parsedDims.height);
+      applyRatio(anchor, parsedDims.width, parsedDims.height, url);
       return;
     }
 
@@ -1422,7 +1430,7 @@
 
     if (ratioCache.has(url)) {
       const cached = ratioCache.get(url);
-      applyRatio(anchor, cached.width, cached.height);
+      applyRatio(anchor, cached.width, cached.height, url);
       return;
     }
 
@@ -1441,7 +1449,7 @@
       ratioCache.set(url, ratio);
       const anchors = pendingRatioRequests.get(url) || [];
       pendingRatioRequests.delete(url);
-      anchors.forEach((pendingAnchor) => applyRatio(pendingAnchor, ratio.width, ratio.height));
+      anchors.forEach((pendingAnchor) => applyRatio(pendingAnchor, ratio.width, ratio.height, url));
     };
 
     probe.onload = () => finish(probe.naturalWidth, probe.naturalHeight);
