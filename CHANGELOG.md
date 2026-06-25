@@ -2,6 +2,16 @@
 
 All notable changes to SimpCity Thread Grid are documented here. This file is the update-log source shown by the website catalog.
 
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Security
+
 ## [9.0.0] - 2026-06-24
 
 ### Added
