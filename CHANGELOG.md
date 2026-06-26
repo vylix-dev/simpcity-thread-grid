@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.4] - 2026-06-26
+
+### Changed
+- Added the vylix logo to the Thread Grid settings modal header.
+
 ## [9.1.2] - 2026-06-26
 
 ### Fixed
