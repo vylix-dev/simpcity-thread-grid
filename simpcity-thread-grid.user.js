@@ -549,7 +549,7 @@
     .scg-donation-section {
       display: grid !important;
       gap: 10px !important;
-      margin: 19px 0 2px !important;
+      margin: 0 18px 16px !important;
       padding: 12px !important;
       border: 1px solid rgba(255, 77, 77, 0.24) !important;
       border-radius: 8px !important;
@@ -1310,8 +1310,6 @@
 
       createSectionTitle('Interaction'),
       createToggleRow('Card Hover Lift', 'hoverAnim', draft),
-
-      createDonationSection(),
     ]);
 
     const resetButton = createElement('button', {
@@ -1334,6 +1332,7 @@
       createElement('div', { className: 'scg-modal-header' }, [title, closeButton]),
       body,
       createElement('div', { className: 'scg-modal-footer' }, [resetButton, cancelButton, saveButton]),
+      createDonationSection(),
     );
     overlay.appendChild(modal);
 
