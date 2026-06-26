@@ -33,6 +33,8 @@
     legacyStorageKey: 'sc-grid-v3',
   });
 
+  const DONATION_URL = 'https://ko-fi.com/vylix';
+
   const DEFAULT_SETTINGS = Object.freeze({
     enabled: true,
     cardMinWidth: 220,
@@ -544,6 +546,38 @@
       margin-top: 0 !important;
     }
 
+    .scg-donation-section {
+      display: grid !important;
+      gap: 10px !important;
+      margin: 19px 0 2px !important;
+      padding: 12px !important;
+      border: 1px solid rgba(255, 77, 77, 0.24) !important;
+      border-radius: 8px !important;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+        rgba(255, 77, 77, 0.08) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 10px 28px rgba(0, 0, 0, 0.18), 0 0 22px rgba(255, 77, 77, 0.06) !important;
+    }
+
+    .scg-donation-copy {
+      margin: 0 !important;
+      color: #aaa8a8 !important;
+      font-size: 13px !important;
+    }
+
+    .scg-donation-copy strong {
+      color: #f2f2f0 !important;
+      font-weight: 700 !important;
+    }
+
+    .scg-button-donate {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: fit-content !important;
+      text-decoration: none !important;
+    }
+
     .scg-row {
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) auto auto !important;
@@ -773,8 +807,10 @@
         padding-inline: 14px !important;
       }
 
-      .scg-button {
+      .scg-button,
+      .scg-button-donate {
         flex: 1 1 120px !important;
+        width: 100% !important;
       }
     }
 
@@ -1078,6 +1114,22 @@
     return createElement('div', { className: 'scg-section-title', textContent: text });
   }
 
+  function createDonationSection() {
+    return createElement('div', { className: 'scg-donation-section' }, [
+      createElement('p', { className: 'scg-donation-copy' }, [
+        createElement('strong', { textContent: 'Enjoying the script?' }),
+        ' Support vylix development and future updates.',
+      ]),
+      createElement('a', {
+        className: 'scg-button scg-button-primary scg-button-donate',
+        href: DONATION_URL,
+        target: '_blank',
+        rel: 'noreferrer',
+        textContent: 'Support on Ko-fi',
+      }),
+    ]);
+  }
+
   function createToggleRow(labelText, key, draft) {
     const input = createElement('input', {
       type: 'checkbox',
@@ -1258,6 +1310,8 @@
 
       createSectionTitle('Interaction'),
       createToggleRow('Card Hover Lift', 'hoverAnim', draft),
+
+      createDonationSection(),
     ]);
 
     const resetButton = createElement('button', {
