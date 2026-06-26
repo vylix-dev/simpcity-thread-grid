@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.5] - 2026-06-26
+
+### Changed
+- Added vylix logo metadata so Tampermonkey dashboard entries use the project icon.
+
 ## [9.1.4] - 2026-06-26
 
 ### Changed
