@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.2] - 2026-06-26
+
+### Fixed
+- Prevented Thread Grid thumbnail sizing from leaking into search-result rows and collapsing titles into vertical text.
+
 ## [9.1.1] - 2026-06-25
 
 ### Changed

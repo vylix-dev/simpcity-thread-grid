@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.1
+// @version      9.1.2
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -72,7 +72,7 @@
       align-items: start !important;
     }
 
-    body.scg-enabled .structItem--thread {
+    body.scg-enabled .structItemContainer-group .structItem--thread {
       display: flex !important;
       flex-direction: column !important;
       height: auto !important;
@@ -86,26 +86,26 @@
       transition: transform 130ms ease, box-shadow 130ms ease !important;
     }
 
-    body.scg-enabled:not(.scg-no-hover) .structItem--thread:hover {
+    body.scg-enabled:not(.scg-no-hover) .structItemContainer-group .structItem--thread:hover {
       transform: translateY(-3px) !important;
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4) !important;
     }
 
-    body.scg-enabled .structItem-cell--icon:not(.structItem-cell--iconEnd) {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--icon:not(.structItem-cell--iconEnd) {
       width: 100% !important;
       min-width: 0 !important;
       height: auto !important;
       overflow: hidden !important;
     }
 
-    body.scg-enabled .structItem-cell--icon:not(.structItem-cell--iconEnd) .structItem-iconContainer {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--icon:not(.structItem-cell--iconEnd) .structItem-iconContainer {
       width: 100% !important;
       min-width: 0 !important;
       height: auto !important;
     }
 
-    body.scg-enabled a.dcThumbnail,
-    body.scg-sidebar-enabled a.dcThumbnail {
+    body.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail,
+    body.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail {
       display: block !important;
       width: 100% !important;
       height: auto !important;
@@ -119,8 +119,8 @@
       background-repeat: no-repeat !important;
     }
 
-    body.scg-enabled a.dcThumbnail img,
-    body.scg-sidebar-enabled a.dcThumbnail img {
+    body.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail img,
+    body.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail img {
       display: block !important;
       width: 100% !important;
       height: 100% !important;
@@ -132,35 +132,39 @@
       background-repeat: no-repeat !important;
     }
 
-    body.scg-thumb-contain a.dcThumbnail {
+    body.scg-thumb-contain.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail,
+    body.scg-thumb-contain.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail {
       background-color: #050505 !important;
       background-size: contain !important;
       background-position: center center !important;
       background-repeat: no-repeat !important;
     }
 
-    body.scg-thumb-contain a.dcThumbnail::before,
-    body.scg-thumb-contain a.dcThumbnail::after {
+    body.scg-thumb-contain.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail::before,
+    body.scg-thumb-contain.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail::after,
+    body.scg-thumb-contain.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail::before,
+    body.scg-thumb-contain.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail::after {
       display: none !important;
       padding: 0 !important;
       content: none !important;
     }
 
-    body.scg-thumb-contain a.dcThumbnail img {
+    body.scg-thumb-contain.scg-enabled .structItemContainer-group .structItem--thread a.dcThumbnail img,
+    body.scg-thumb-contain.scg-sidebar-enabled .block-body.scg-sidebar a.dcThumbnail img {
       object-fit: cover !important;
       object-position: -99999px -99999px !important;
       background: transparent !important;
       opacity: 0 !important;
     }
 
-    body.scg-enabled .structItem-cell--main {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--main {
       flex: 1 1 auto !important;
       width: auto !important;
       min-width: 0 !important;
       padding: 9px 11px 5px !important;
     }
 
-    body.scg-enabled .structItem-title {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-title {
       display: -webkit-box !important;
       overflow: hidden !important;
       white-space: normal !important;
@@ -171,13 +175,13 @@
       word-break: break-word !important;
     }
 
-    body.scg-enabled.scg-title-unlimited .structItem-title {
+    body.scg-enabled.scg-title-unlimited .structItemContainer-group .structItem--thread .structItem-title {
       display: block !important;
       overflow: visible !important;
       -webkit-line-clamp: unset !important;
     }
 
-    body.scg-enabled .structItem-minor {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-minor {
       margin-top: 5px !important;
       overflow: hidden !important;
       white-space: nowrap !important;
@@ -186,19 +190,19 @@
       opacity: 0.65 !important;
     }
 
-    body.scg-enabled .structItem-statuses {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-statuses {
       margin-bottom: 3px !important;
     }
 
-    body.scg-enabled .structItem-pageJump {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-pageJump {
       display: none !important;
     }
 
-    body.scg-enabled.scg-show-page-numbers .structItem-pageJump {
+    body.scg-enabled.scg-show-page-numbers .structItemContainer-group .structItem--thread .structItem-pageJump {
       display: inline !important;
     }
 
-    body.scg-enabled .structItem-cell--meta {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--meta {
       display: flex !important;
       flex-wrap: wrap !important;
       gap: 10px !important;
@@ -208,26 +212,26 @@
       font-size: 11px !important;
     }
 
-    body.scg-enabled .structItem-cell--meta .pairs {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--meta .pairs {
       display: flex !important;
       gap: 4px !important;
       margin: 0 !important;
     }
 
-    body.scg-enabled .structItem-cell--meta dt {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--meta dt {
       opacity: 0.55 !important;
     }
 
-    body.scg-enabled .structItem-cell--meta dd {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--meta dd {
       font-weight: 600 !important;
     }
 
-    body.scg-enabled .structItem-cell--latest,
-    body.scg-enabled .structItem-cell--iconEnd {
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--latest,
+    body.scg-enabled .structItemContainer-group .structItem--thread .structItem-cell--iconEnd {
       display: none !important;
     }
 
-    body.scg-enabled.scg-show-latest .structItem-cell--latest {
+    body.scg-enabled.scg-show-latest .structItemContainer-group .structItem--thread .structItem-cell--latest {
       display: flex !important;
       align-items: center !important;
       gap: 6px !important;
@@ -239,7 +243,7 @@
       opacity: 0.6 !important;
     }
 
-    body.scg-enabled .structItem--thread + .structItem--thread {
+    body.scg-enabled .structItemContainer-group .structItem--thread + .structItem--thread {
       margin-top: 0 !important;
       border-top: none !important;
     }
@@ -775,7 +779,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      body.scg-enabled .structItem--thread,
+      body.scg-enabled .structItemContainer-group .structItem--thread,
       body.scg-sidebar-enabled .block-body.scg-sidebar .contentRow,
       .scg-overlay,
       .scg-modal,
@@ -788,7 +792,7 @@
         transition: none !important;
       }
 
-      body.scg-enabled:not(.scg-no-hover) .structItem--thread:hover,
+      body.scg-enabled:not(.scg-no-hover) .structItemContainer-group .structItem--thread:hover,
       body.scg-sidebar-enabled:not(.scg-no-hover) .block-body.scg-sidebar .contentRow:hover,
       .scg-settings-link:hover,
       .scg-settings-link:focus-visible {
@@ -1474,8 +1478,13 @@
 
   function scan() {
     injectButton();
-    document.querySelectorAll('a.dcThumbnail').forEach(processThumb);
     processSidebar();
+
+    if (!settings.enabled) return;
+
+    const thumbnailSelectors = ['.structItemContainer-group .structItem--thread a.dcThumbnail'];
+    if (settings.sidebarGrid) thumbnailSelectors.push('.block-body.scg-sidebar a.dcThumbnail');
+    document.querySelectorAll(thumbnailSelectors.join(',')).forEach(processThumb);
   }
 
   function queueScan() {
