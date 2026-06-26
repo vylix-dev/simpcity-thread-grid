@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.6] - 2026-06-26
+
+### Changed
+- Switched Tampermonkey dashboard icon metadata from SVG to PNG assets for reliable rendering.
+
 ## [9.1.5] - 2026-06-26
 
 ### Changed
