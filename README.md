@@ -24,7 +24,7 @@ Keep `@version` in `simpcity-thread-grid.user.js`, `simpcity-thread-grid.meta.js
 - Adds a Thumbnail Fit setting for crop-to-fill or full uncropped image display.
 - Adds configurable card width, gaps, title lines, page-number visibility, latest-post visibility, sidebar grid, and hover animation controls.
 - Provides a Tampermonkey menu and accessible settings modal.
-- Supports `simpcity.su` and `simpcity.cr` domains.
+- Supports the `simpcity.cr` domain.
 
 ## Changelog
 

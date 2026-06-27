@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.7] - 2026-06-27
+
+### Changed
+- Removed the retired alternate domain from supported matches.
+
 ## [9.1.6] - 2026-06-26
 
 ### Changed
