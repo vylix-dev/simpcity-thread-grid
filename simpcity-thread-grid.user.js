@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.10
+// @version      9.1.11
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -1621,6 +1621,38 @@
     return candidates[candidates.length - 1] || null;
   }
 
+  function normalizeLogoText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/%20/g, ' ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  function isPlatformLogoUrl(url) {
+    const normalizedUrl = normalizeLogoText(url);
+    if (!normalizedUrl) return false;
+
+    const platformPattern = /\b(?:onlyfans|instagram|insta|twitter|xcom|x\s*twitter|tiktok|fansly|fanvue|patreon|facebook|snapchat|reddit|discord|telegram|youtube|twitch|linktree|manyvids)\b/i;
+    if (!platformPattern.test(normalizedUrl)) return false;
+
+    let fileStem = '';
+    try {
+      const parsedUrl = new URL(String(url), window.location.href);
+      fileStem = normalizeLogoText(decodeURIComponent(parsedUrl.pathname.split('/').pop() || '').replace(/\.[a-z0-9]+$/i, ''));
+    } catch (_error) {
+      fileStem = '';
+    }
+
+    const socialAssetPattern = /\b(?:logo|logos|icon|icons|brand|brands|social|sprite|fontawesome|fa|asset|assets|style|styles)\b/i;
+    if (socialAssetPattern.test(normalizedUrl)) return true;
+    if (/\.(?:svg|ico)(?:[?#]|$)/i.test(String(url))) return true;
+    if (fileStem && /^(?:onlyfans|instagram|insta|twitter|xcom|xtwitter|tiktok|fansly|fanvue|patreon|facebook|snapchat|reddit|discord|telegram|youtube|twitch|linktree|manyvids)$/i.test(fileStem.replace(/\s+/g, ''))) return true;
+    if (fileStem && platformPattern.test(fileStem) && /\b(?:logo|icon|brand|social)\b/i.test(fileStem)) return true;
+
+    return false;
+  }
+
   function getImageSource(image, baseUrl) {
     const attributes = ['data-url', 'data-full', 'data-src', 'data-lazy-src', 'data-original', 'data-file-url', 'src'];
 
@@ -1634,7 +1666,7 @@
 
   function isLikelyPostImageUrl(url) {
     const value = String(url || '').toLowerCase();
-    if (!value) return false;
+    if (!value || isPlatformLogoUrl(value)) return false;
     if (/\.(?:jpe?g|png|gif|webp)(?:[?#]|$)/i.test(value)) return true;
     return value.includes('/attachments/') || value.includes('/proxy.php?image=') || value.includes('/proxy.php?url=');
   }
@@ -1674,6 +1706,7 @@
     const height = getNumericAttribute(image, ['height', 'data-height']);
 
     if (/\.(?:svg|ico)(?:[?#]|$)/i.test(url)) return false;
+    if (isPlatformLogoUrl(url)) return false;
     if (url.includes('/styles/') || url.includes('/smilies/') || url.includes('/data/avatars/') || url.includes('/avatars/')) return false;
     if (/\b(?:avatar|emoji|smilie|reaction)\b/i.test(className)) return false;
     if (width > 0 && height > 0 && (width < 80 || height < 80)) return false;
@@ -1900,6 +1933,11 @@
     const image = anchor.querySelector('img');
     const thumbnail = getThumbnailInfo(anchor, image);
     const url = thumbnail.url;
+
+    if (isPlatformLogoUrl(url)) {
+      queueThreadFallbackForAnchor(anchor);
+      return;
+    }
 
     if (thumbnail.source === 'image' && image && image.naturalWidth > 0 && image.naturalHeight > 0) {
       if (image.naturalWidth >= 16 && image.naturalHeight >= 16) {
