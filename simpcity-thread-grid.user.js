@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.9
+// @version      9.1.10
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -876,9 +876,9 @@
   const THREAD_FALLBACK_CACHE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
   const THREAD_FALLBACK_NEGATIVE_TTL_MS = 24 * 60 * 60 * 1000;
   const THREAD_FALLBACK_FETCH_CONCURRENCY = 2;
-  const BLANK_THUMBNAIL_LUMINANCE_THRESHOLD = 14;
-  const BLANK_THUMBNAIL_BRIGHT_PIXEL_THRESHOLD = 24;
-  const BLANK_THUMBNAIL_MAX_BRIGHT_RATIO = 0.03;
+  const BLANK_THUMBNAIL_LUMINANCE_THRESHOLD = 8;
+  const BLANK_THUMBNAIL_BRIGHT_PIXEL_THRESHOLD = 32;
+  const BLANK_THUMBNAIL_MAX_BRIGHT_RATIO = 0.005;
   const threadFallbackCache = loadThreadFallbackCache();
   const pendingThreadFallbackRequests = new Map();
   const threadFallbackQueue = [];
@@ -1547,15 +1547,15 @@
     }
   }
 
-  function getThumbnailUrl(anchor, image) {
+  function getThumbnailInfo(anchor, image) {
     const fromImageBackground = extractCssUrl(getBackgroundImage(image));
-    if (fromImageBackground) return fromImageBackground;
+    if (fromImageBackground) return { url: fromImageBackground, source: 'background' };
 
     const fromAnchorBackground = extractCssUrl(getBackgroundImage(anchor));
-    if (fromAnchorBackground) return fromAnchorBackground;
+    if (fromAnchorBackground) return { url: fromAnchorBackground, source: 'background' };
 
-    if (image) return image.currentSrc || image.src || null;
-    return null;
+    const fromImageSource = image ? image.currentSrc || image.src || null : null;
+    return { url: fromImageSource, source: fromImageSource ? 'image' : 'none' };
   }
 
   function cssUrl(value) {
@@ -1898,12 +1898,13 @@
     if (!anchor || typeof anchor.querySelector !== 'function' || anchor.dataset.scgThumb === 'ready') return;
 
     const image = anchor.querySelector('img');
-    const url = getThumbnailUrl(anchor, image);
+    const thumbnail = getThumbnailInfo(anchor, image);
+    const url = thumbnail.url;
 
-    if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
+    if (thumbnail.source === 'image' && image && image.naturalWidth > 0 && image.naturalHeight > 0) {
       if (image.naturalWidth >= 16 && image.naturalHeight >= 16) {
         applyRatio(anchor, image.naturalWidth, image.naturalHeight, url);
-        maybeQueueBlankThumbnailFallback(anchor, url, image);
+        probeBlankThumbnailFallback(anchor, url);
         return;
       }
 

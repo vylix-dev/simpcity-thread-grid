@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.10] - 2026-06-27
+
+### Changed
+- Limited thread-image fallback to actual missing, broken, or black thumbnail URLs.
+
 ## [9.1.9] - 2026-06-27
 
 ### Changed
