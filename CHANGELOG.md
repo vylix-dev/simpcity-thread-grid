@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.12] - 2026-06-27
+
+### Changed
+- Added a settings toggle for thread-image fallback and skipped social link-preview logos.
+
 ## [9.1.11] - 2026-06-27
 
 ### Changed

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.11
+// @version      9.1.12
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -66,6 +66,7 @@
     gap: 10,
     titleLines: 2,
     thumbnailFit: 'cover',
+    threadImageFallback: true,
     showPageNums: false,
     showLatest: false,
     hoverAnim: true,
@@ -915,6 +916,7 @@
       gap: toInt(source.gap, ...LIMITS.gap, DEFAULT_SETTINGS.gap),
       titleLines: toInt(source.titleLines, ...LIMITS.titleLines, DEFAULT_SETTINGS.titleLines),
       thumbnailFit: toChoice(source.thumbnailFit, THUMBNAIL_FIT_VALUES, DEFAULT_SETTINGS.thumbnailFit),
+      threadImageFallback: toBool(source.threadImageFallback, DEFAULT_SETTINGS.threadImageFallback),
       showPageNums: toBool(source.showPageNums, DEFAULT_SETTINGS.showPageNums),
       showLatest: toBool(source.showLatest, DEFAULT_SETTINGS.showLatest),
       hoverAnim: toBool(source.hoverAnim, DEFAULT_SETTINGS.hoverAnim),
@@ -1433,6 +1435,7 @@
 
       createSectionTitle('Media'),
       createThumbnailFitRow(draft),
+      createToggleRow('Thread Image Fallback', 'threadImageFallback', draft),
 
       createSectionTitle('Content'),
       createToggleRow('Show Page Numbers', 'showPageNums', draft),
@@ -1622,11 +1625,51 @@
   }
 
   function normalizeLogoText(value) {
-    return String(value || '')
+    let decoded = String(value || '');
+    try {
+      decoded = decodeURIComponent(decoded);
+    } catch (_error) {
+      // Keep the original value if it is not valid percent-encoded text.
+    }
+
+    return decoded
       .toLowerCase()
-      .replace(/%20/g, ' ')
       .replace(/[^a-z0-9]+/g, ' ')
       .trim();
+  }
+
+  function isSocialPlatformUrl(value) {
+    if (!value) return false;
+
+    const hostPattern = /(?:^|\.)(?:onlyfans\.com|instagram\.com|twitter\.com|x\.com|tiktok\.com|fansly\.com|fanvue\.com|patreon\.com|facebook\.com|fb\.watch|snapchat\.com|reddit\.com|discord\.gg|discord\.com|t\.me|telegram\.me|telegram\.org|youtube\.com|youtu\.be|twitch\.tv|linktr\.ee|manyvids\.com)$/i;
+
+    try {
+      const parsedUrl = new URL(String(value), window.location.href);
+      if (hostPattern.test(parsedUrl.hostname)) return true;
+    } catch (_error) {
+      // Fall through to decoded text matching below.
+    }
+
+    let decoded = String(value);
+    try {
+      decoded = decodeURIComponent(decoded);
+    } catch (_error) {
+      // Keep the original value if it is not valid percent-encoded text.
+    }
+
+    return /(?:https?:\/\/)?(?:www\.)?(?:onlyfans\.com|instagram\.com|twitter\.com|x\.com|tiktok\.com|fansly\.com|fanvue\.com|patreon\.com|facebook\.com|fb\.watch|snapchat\.com|reddit\.com|discord\.gg|discord\.com|t\.me|telegram\.me|telegram\.org|youtube\.com|youtu\.be|twitch\.tv|linktr\.ee|manyvids\.com)\b/i.test(decoded);
+  }
+
+  function hasSocialPlatformContext(node) {
+    if (!node || typeof node.closest !== 'function') return false;
+
+    const directLink = node.closest('a[href]');
+    if (directLink && isSocialPlatformUrl(directLink.href || directLink.getAttribute('href'))) return true;
+
+    const preview = node.closest('.bbCodeBlock--unfurl, .js-unfurl, .linkPreview, .link-preview, .contentRow, .embed, .bbCodeBlock');
+    if (!preview || typeof preview.querySelectorAll !== 'function') return false;
+
+    return Array.from(preview.querySelectorAll('a[href]')).some((link) => isSocialPlatformUrl(link.href || link.getAttribute('href')));
   }
 
   function isPlatformLogoUrl(url) {
@@ -1672,6 +1715,8 @@
   }
 
   function getLinkedImageSource(link, baseUrl) {
+    if (hasSocialPlatformContext(link)) return null;
+
     const attributes = ['data-url', 'data-full', 'data-src', 'data-file-url', 'href'];
 
     for (const attribute of attributes) {
@@ -1706,7 +1751,7 @@
     const height = getNumericAttribute(image, ['height', 'data-height']);
 
     if (/\.(?:svg|ico)(?:[?#]|$)/i.test(url)) return false;
-    if (isPlatformLogoUrl(url)) return false;
+    if (isPlatformLogoUrl(url) || hasSocialPlatformContext(image)) return false;
     if (url.includes('/styles/') || url.includes('/smilies/') || url.includes('/data/avatars/') || url.includes('/avatars/')) return false;
     if (/\b(?:avatar|emoji|smilie|reaction)\b/i.test(className)) return false;
     if (width > 0 && height > 0 && (width < 80 || height < 80)) return false;
@@ -1812,6 +1857,12 @@
   }
 
   function queueThreadFallbackForAnchor(anchor) {
+    if (!settings.threadImageFallback) {
+      applyRatio(anchor, 16, 9);
+      anchor.dataset.scgThreadFallback = 'disabled';
+      return;
+    }
+
     applyThreadFallback(anchor, null);
 
     const threadUrl = getThreadUrl(anchor);

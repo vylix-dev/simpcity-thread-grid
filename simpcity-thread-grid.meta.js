@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.11
+// @version      9.1.12
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT

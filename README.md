@@ -21,7 +21,7 @@ Keep `@version` in `simpcity-thread-grid.user.js`, `simpcity-thread-grid.meta.js
 
 - Converts SimpCity thread lists into responsive cards.
 - Preserves thumbnail aspect ratios with caching and image probing.
-- Fills missing or broken thread-list thumbnails with a cached image found from the thread page posts.
+- Optionally fills missing, broken, black, or social-logo thumbnails with a cached image found from the thread page posts.
 - Adds a Thumbnail Fit setting for crop-to-fill or full uncropped image display.
 - Adds configurable card width, gaps, title lines, page-number visibility, latest-post visibility, sidebar grid, and hover animation controls.
 - Provides a Tampermonkey menu and accessible settings modal.
