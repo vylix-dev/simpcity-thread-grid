@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.7
+// @version      9.1.8
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -36,6 +36,29 @@
 
   const DONATION_URL = 'https://ko-fi.com/vylix';
   const LOGO_PATH = 'M 512.50 802.06 C473.23,795.69 443.36,760.28 422.19,695.00 C416.37,677.05 409.33,650.22 400.54,612.45 C383.02,537.19 375.01,511.16 360.25,481.57 C340.74,442.44 310.85,412.01 276.66,396.46 L 271.50 394.12 L 275.87 394.06 C282.30,393.97 303.95,398.58 315.94,402.58 C336.56,409.47 360.37,422.84 379.50,438.29 C395.48,451.19 416.70,474.82 429.98,494.50 C443.91,515.13 459.88,544.87 473.66,575.86 C477.24,583.91 488.70,611.65 499.14,637.50 C531.09,716.66 544.06,739.87 561.11,748.37 C567.29,751.45 575.88,751.91 581.71,749.48 C587.71,746.97 588.26,746.18 586.10,743.14 C582.75,738.42 574.14,720.71 570.96,712.00 C569.26,707.33 566.70,698.33 565.28,692.00 C563.03,682.00 562.69,678.15 562.66,662.50 C562.64,646.65 562.96,642.99 565.34,631.87 C577.62,574.51 613.61,518.79 723.49,387.00 C763.19,339.37 774.42,324.54 782.29,309.31 C793.51,287.58 792.14,269.82 778.79,263.96 C774.35,262.01 771.81,261.64 763.00,261.65 C745.18,261.66 722.81,267.04 684.50,280.53 C630.01,299.70 600.98,306.09 550.00,310.13 C531.23,311.62 473.62,311.58 444.00,310.07 C384.84,307.05 332.91,307.65 311.57,311.61 C276.75,318.07 254.99,331.66 244.51,353.50 C238.60,365.82 237.63,370.78 238.27,385.38 C239.15,405.16 244.30,420.50 263.97,461.98 C269.58,473.79 278.57,492.01 283.95,502.48 C308.05,549.34 317.25,567.46 316.69,566.95 C316.35,566.65 308.95,555.63 300.23,542.45 C282.46,515.57 263.38,487.93 242.64,459.00 C206.27,408.27 198.23,395.94 188.89,376.50 C176.08,349.85 173.00,326.01 179.49,303.64 C190.40,265.97 224.39,238.96 275.12,227.62 C296.07,222.93 309.44,221.62 336.50,221.60 C381.96,221.56 416.88,226.63 498.00,245.01 C577.86,263.10 599.30,266.44 635.00,266.32 C658.75,266.25 666.64,265.36 718.00,257.01 C762.73,249.73 773.24,248.58 788.00,249.34 C801.77,250.04 808.71,251.74 819.90,257.14 C835.74,264.79 846.27,278.56 851.13,297.97 C852.98,305.34 853.19,308.40 852.76,321.47 C852.06,342.61 848.39,355.71 836.95,378.00 C827.05,397.28 818.14,409.56 775.92,462.14 C738.26,509.04 716.55,538.29 694.76,571.50 C670.71,608.14 657.69,631.56 622.81,700.93 C596.05,754.14 590.46,763.86 580.07,775.19 C568.98,787.29 553.68,796.85 539.74,800.42 C532.40,802.30 518.97,803.11 512.50,802.06 Z';
+
+  const FALLBACK_THUMBNAIL_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="No thread thumbnail yet">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#121212"/>
+          <stop offset="0.52" stop-color="#050505"/>
+          <stop offset="1" stop-color="#1a0507"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="46%" r="58%">
+          <stop offset="0" stop-color="#ff2a2a" stop-opacity="0.25"/>
+          <stop offset="0.56" stop-color="#ff2a2a" stop-opacity="0.08"/>
+          <stop offset="1" stop-color="#ff2a2a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="1280" height="720" fill="url(#bg)"/>
+      <rect width="1280" height="720" fill="url(#glow)"/>
+      <path d="M0 0H1280V720H0z" fill="none" stroke="#ff2a2a" stroke-opacity="0.2" stroke-width="4"/>
+      <path d="${LOGO_PATH}" fill="#f7efe0" opacity="0.88" transform="translate(446 130) scale(0.38)"/>
+      <text x="640" y="542" fill="#f7efe0" font-family="Rajdhani, Arial, sans-serif" font-size="44" font-weight="700" text-anchor="middle" letter-spacing="4">VYLIX</text>
+      <text x="640" y="592" fill="#ff6b6b" font-family="Rajdhani, Arial, sans-serif" font-size="24" font-weight="600" text-anchor="middle" letter-spacing="3">THREAD IMAGE FALLBACK</text>
+    </svg>
+  `)}`;
 
   const DEFAULT_SETTINGS = Object.freeze({
     enabled: true,
@@ -848,6 +871,15 @@
 
   const ratioCache = new Map();
   const pendingRatioRequests = new Map();
+  const THREAD_FALLBACK_CACHE_KEY = `${APP.storageKey}.thread-image-fallbacks.v1`;
+  const THREAD_FALLBACK_CACHE_MAX_ENTRIES = 250;
+  const THREAD_FALLBACK_CACHE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+  const THREAD_FALLBACK_NEGATIVE_TTL_MS = 24 * 60 * 60 * 1000;
+  const THREAD_FALLBACK_FETCH_CONCURRENCY = 2;
+  const threadFallbackCache = loadThreadFallbackCache();
+  const pendingThreadFallbackRequests = new Map();
+  const threadFallbackQueue = [];
+  let activeThreadFallbackFetches = 0;
   let settings = loadSettings();
   let scanQueued = false;
   let initialized = false;
@@ -958,6 +990,80 @@
 
   function saveSettings(nextSettings) {
     storageSet(APP.storageKey, normalizeSettings(nextSettings));
+  }
+
+  function normalizeCacheEntry(entry) {
+    if (!isPlainObject(entry)) return null;
+    const imageUrl = typeof entry.imageUrl === 'string' && entry.imageUrl ? entry.imageUrl : null;
+    const checkedAt = Number(entry.checkedAt) || 0;
+    if (!checkedAt) return null;
+
+    return {
+      imageUrl,
+      width: toInt(entry.width, 1, 10000, 16),
+      height: toInt(entry.height, 1, 10000, 9),
+      checkedAt,
+    };
+  }
+
+  function loadThreadFallbackCache() {
+    const stored = parseStoredValue(storageGet(THREAD_FALLBACK_CACHE_KEY));
+    const source = isPlainObject(stored?.entries) ? stored.entries : stored;
+    const entries = new Map();
+    const now = Date.now();
+
+    if (!isPlainObject(source)) return entries;
+
+    Object.entries(source).forEach(([threadUrl, rawEntry]) => {
+      const entry = normalizeCacheEntry(rawEntry);
+      if (!entry) return;
+
+      const ttl = entry.imageUrl ? THREAD_FALLBACK_CACHE_TTL_MS : THREAD_FALLBACK_NEGATIVE_TTL_MS;
+      if (now - entry.checkedAt > ttl) return;
+
+      entries.set(threadUrl, entry);
+    });
+
+    return entries;
+  }
+
+  function saveThreadFallbackCache() {
+    const orderedEntries = Array.from(threadFallbackCache.entries())
+      .sort((left, right) => right[1].checkedAt - left[1].checkedAt)
+      .slice(0, THREAD_FALLBACK_CACHE_MAX_ENTRIES);
+
+    storageSet(THREAD_FALLBACK_CACHE_KEY, {
+      entries: Object.fromEntries(orderedEntries),
+    });
+  }
+
+  function getCachedThreadFallback(threadUrl) {
+    const entry = threadFallbackCache.get(threadUrl);
+    if (!entry) return undefined;
+
+    const ttl = entry.imageUrl ? THREAD_FALLBACK_CACHE_TTL_MS : THREAD_FALLBACK_NEGATIVE_TTL_MS;
+    if (Date.now() - entry.checkedAt <= ttl) return entry;
+
+    threadFallbackCache.delete(threadUrl);
+    saveThreadFallbackCache();
+    return undefined;
+  }
+
+  function setCachedThreadFallback(threadUrl, fallback) {
+    threadFallbackCache.set(threadUrl, {
+      imageUrl: fallback?.imageUrl || null,
+      width: fallback?.width || 16,
+      height: fallback?.height || 9,
+      checkedAt: Date.now(),
+    });
+
+    if (threadFallbackCache.size > THREAD_FALLBACK_CACHE_MAX_ENTRIES) {
+      const oldest = Array.from(threadFallbackCache.entries())
+        .sort((left, right) => left[1].checkedAt - right[1].checkedAt)[0];
+      if (oldest) threadFallbackCache.delete(oldest[0]);
+    }
+
+    saveThreadFallbackCache();
   }
 
   function addStyle(css) {
@@ -1451,6 +1557,199 @@
     return `url("${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`;
   }
 
+  function toAbsoluteHttpUrl(value, baseUrl = window.location.href) {
+    if (!value) return null;
+
+    const trimmed = String(value).trim();
+    if (!trimmed || /^data:/i.test(trimmed) || /^javascript:/i.test(trimmed)) return null;
+
+    try {
+      const url = new URL(trimmed, baseUrl);
+      return url.protocol === 'http:' || url.protocol === 'https:' ? url : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function isSimpCityHost(hostname) {
+    return hostname === 'simpcity.cr' || hostname.endsWith('.simpcity.cr');
+  }
+
+  function normalizeThreadUrl(value) {
+    const url = toAbsoluteHttpUrl(value);
+    if (!url || !isSimpCityHost(url.hostname) || !/\/threads\//i.test(url.pathname)) return null;
+
+    url.hash = '';
+    url.search = '';
+    url.pathname = url.pathname
+      .replace(/\/(?:unread|latest)\/?$/i, '/')
+      .replace(/\/page-\d+\/?$/i, '/');
+
+    return url.href;
+  }
+
+  function getThreadUrl(anchor) {
+    const container = anchor.closest?.('.structItem--thread, .contentRow') || anchor.parentElement;
+    const candidates = [
+      anchor,
+      container?.querySelector?.('.structItem-title a[href]'),
+      container?.querySelector?.('.contentRow-main a[href]'),
+      container?.querySelector?.('a[href*="/threads/"]'),
+    ];
+
+    for (const candidate of candidates) {
+      const threadUrl = normalizeThreadUrl(candidate?.href || candidate?.getAttribute?.('href'));
+      if (threadUrl) return threadUrl;
+    }
+
+    return null;
+  }
+
+  function getSrcsetCandidate(srcset) {
+    if (!srcset) return null;
+
+    const candidates = String(srcset)
+      .split(',')
+      .map((part) => part.trim().split(/\s+/)[0])
+      .filter(Boolean);
+
+    return candidates[candidates.length - 1] || null;
+  }
+
+  function getImageSource(image, baseUrl) {
+    const attributes = ['data-src', 'data-lazy-src', 'data-original', 'src', 'data-url'];
+
+    for (const attribute of attributes) {
+      const url = toAbsoluteHttpUrl(image.getAttribute(attribute), baseUrl);
+      if (url) return url;
+    }
+
+    return toAbsoluteHttpUrl(getSrcsetCandidate(image.getAttribute('srcset') || image.getAttribute('data-srcset')), baseUrl);
+  }
+
+  function getNumericAttribute(node, names) {
+    for (const name of names) {
+      const value = Number(node.getAttribute(name));
+      if (Number.isFinite(value) && value > 0) return value;
+    }
+
+    return 0;
+  }
+
+  function getImageRatio(image, imageUrl) {
+    const attrWidth = getNumericAttribute(image, ['width', 'data-width']);
+    const attrHeight = getNumericAttribute(image, ['height', 'data-height']);
+    if (attrWidth >= 16 && attrHeight >= 16) return { width: attrWidth, height: attrHeight };
+
+    return parseDimsFromUrl(imageUrl) || { width: 16, height: 9 };
+  }
+
+  function isUsablePostImage(image, imageUrl) {
+    const url = String(imageUrl).toLowerCase();
+    const className = String(image.getAttribute('class') || '').toLowerCase();
+    const width = getNumericAttribute(image, ['width', 'data-width']);
+    const height = getNumericAttribute(image, ['height', 'data-height']);
+
+    if (/\.(?:svg|ico)(?:[?#]|$)/i.test(url)) return false;
+    if (url.includes('/styles/') || url.includes('/smilies/') || url.includes('/data/avatars/') || url.includes('/avatars/')) return false;
+    if (/\b(?:avatar|emoji|smilie|reaction)\b/i.test(className)) return false;
+    if (width > 0 && height > 0 && (width < 80 || height < 80)) return false;
+    if (image.closest('.avatar, .message-avatar, .message-user, .message-attribution, .reaction, .reactionsBar, .js-reaction, .smilie, .emoji, .bbCodeBlock--quote')) return false;
+
+    return true;
+  }
+
+  function extractThreadFallbackImage(html, threadUrl) {
+    const documentFromThread = new DOMParser().parseFromString(html, 'text/html');
+    const containers = documentFromThread.querySelectorAll('.message--post .message-body, article.message .message-body, .message .bbWrapper, .message-body, article.message');
+    const scopes = containers.length ? Array.from(containers) : [documentFromThread.body].filter(Boolean);
+
+    for (const scope of scopes) {
+      const images = scope.querySelectorAll('img');
+
+      for (const image of images) {
+        const imageUrl = getImageSource(image, threadUrl);
+        if (!imageUrl || !isUsablePostImage(image, imageUrl.href)) continue;
+
+        return {
+          imageUrl: imageUrl.href,
+          ...getImageRatio(image, imageUrl.href),
+        };
+      }
+    }
+
+    return null;
+  }
+
+  async function fetchThreadFallbackImage(threadUrl) {
+    const response = await fetch(threadUrl, {
+      credentials: 'same-origin',
+      cache: 'force-cache',
+    });
+
+    if (!response.ok) throw new Error(`Thread fallback request failed: ${response.status}`);
+
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType && !contentType.toLowerCase().includes('text/html')) throw new Error('Thread fallback response was not HTML');
+
+    return extractThreadFallbackImage(await response.text(), threadUrl);
+  }
+
+  function applyThreadFallback(anchor, fallback) {
+    const imageUrl = fallback?.imageUrl || FALLBACK_THUMBNAIL_URL;
+    applyRatio(anchor, fallback?.width || 16, fallback?.height || 9, imageUrl);
+    anchor.dataset.scgThreadFallback = fallback?.imageUrl ? 'ready' : 'empty';
+  }
+
+  function finishThreadFallbackRequest(threadUrl, fallback, shouldCache = true) {
+    if (shouldCache) setCachedThreadFallback(threadUrl, fallback);
+
+    const anchors = pendingThreadFallbackRequests.get(threadUrl) || [];
+    pendingThreadFallbackRequests.delete(threadUrl);
+    anchors.forEach((anchor) => applyThreadFallback(anchor, fallback));
+  }
+
+  function pumpThreadFallbackQueue() {
+    while (activeThreadFallbackFetches < THREAD_FALLBACK_FETCH_CONCURRENCY && threadFallbackQueue.length) {
+      const threadUrl = threadFallbackQueue.shift();
+      activeThreadFallbackFetches += 1;
+
+      fetchThreadFallbackImage(threadUrl)
+        .then((fallback) => finishThreadFallbackRequest(threadUrl, fallback))
+        .catch(() => finishThreadFallbackRequest(threadUrl, null, false))
+        .finally(() => {
+          activeThreadFallbackFetches -= 1;
+          pumpThreadFallbackQueue();
+        });
+    }
+  }
+
+  function requestThreadFallback(anchor, threadUrl) {
+    const cached = getCachedThreadFallback(threadUrl);
+    if (cached !== undefined) {
+      applyThreadFallback(anchor, cached);
+      return;
+    }
+
+    if (pendingThreadFallbackRequests.has(threadUrl)) {
+      pendingThreadFallbackRequests.get(threadUrl).push(anchor);
+      anchor.dataset.scgThreadFallback = 'pending';
+      return;
+    }
+
+    pendingThreadFallbackRequests.set(threadUrl, [anchor]);
+    threadFallbackQueue.push(threadUrl);
+    anchor.dataset.scgThreadFallback = 'pending';
+    pumpThreadFallbackQueue();
+  }
+
+  function queueThreadFallbackForAnchor(anchor) {
+    applyThreadFallback(anchor, null);
+
+    const threadUrl = getThreadUrl(anchor);
+    if (threadUrl) requestThreadFallback(anchor, threadUrl);
+  }
+
   function parseDimsFromUrl(url) {
     if (!url) return null;
     const match = String(url).match(/(?:^|[^\d])(\d{2,5})x(\d{2,5})(?:[^\d]|$)/i);
@@ -1493,7 +1792,12 @@
     const url = getThumbnailUrl(anchor, image);
 
     if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
-      applyRatio(anchor, image.naturalWidth, image.naturalHeight, url);
+      if (image.naturalWidth >= 16 && image.naturalHeight >= 16) {
+        applyRatio(anchor, image.naturalWidth, image.naturalHeight, url);
+        return;
+      }
+
+      queueThreadFallbackForAnchor(anchor);
       return;
     }
 
@@ -1504,7 +1808,7 @@
     }
 
     if (!url) {
-      applyRatio(anchor, 16, 9);
+      queueThreadFallbackForAnchor(anchor);
       return;
     }
 
@@ -1524,16 +1828,22 @@
     pendingRatioRequests.set(url, [anchor]);
 
     const probe = new Image();
-    const finish = (width, height) => {
-      const ratio = { width: width || 16, height: height || 9 };
-      ratioCache.set(url, ratio);
+    const finish = (width, height, useThreadFallback = false) => {
       const anchors = pendingRatioRequests.get(url) || [];
       pendingRatioRequests.delete(url);
+
+      if (useThreadFallback || !width || !height || width < 16 || height < 16) {
+        anchors.forEach((pendingAnchor) => queueThreadFallbackForAnchor(pendingAnchor));
+        return;
+      }
+
+      const ratio = { width, height };
+      ratioCache.set(url, ratio);
       anchors.forEach((pendingAnchor) => applyRatio(pendingAnchor, ratio.width, ratio.height, url));
     };
 
     probe.onload = () => finish(probe.naturalWidth, probe.naturalHeight);
-    probe.onerror = () => finish(16, 9);
+    probe.onerror = () => finish(0, 0, true);
     probe.src = url;
   }
 

@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.8] - 2026-06-27
+
+### Changed
+- Added cached thread-page image fallbacks for threads without list thumbnails.
+
 ## [9.1.7] - 2026-06-27
 
 ### Changed
