@@ -12,6 +12,11 @@ All notable changes to SimpCity Thread Grid are documented here. This file is th
 
 ### Security
 
+## [9.1.9] - 2026-06-27
+
+### Changed
+- Detected black placeholder thumbnails and replaced them with images found from thread posts.
+
 ## [9.1.8] - 2026-06-27
 
 ### Changed

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SimpCity Thread Grid
 // @namespace    https://github.com/vylix-dev/simpcity-thread-grid
-// @version      9.1.8
+// @version      9.1.9
 // @description  Responsive card grid for SimpCity thread lists and sidebar latest posts, with a polished settings UI.
 // @author       vylix-dev
 // @license      MIT
@@ -876,9 +876,14 @@
   const THREAD_FALLBACK_CACHE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
   const THREAD_FALLBACK_NEGATIVE_TTL_MS = 24 * 60 * 60 * 1000;
   const THREAD_FALLBACK_FETCH_CONCURRENCY = 2;
+  const BLANK_THUMBNAIL_LUMINANCE_THRESHOLD = 14;
+  const BLANK_THUMBNAIL_BRIGHT_PIXEL_THRESHOLD = 24;
+  const BLANK_THUMBNAIL_MAX_BRIGHT_RATIO = 0.03;
   const threadFallbackCache = loadThreadFallbackCache();
   const pendingThreadFallbackRequests = new Map();
   const threadFallbackQueue = [];
+  const blankThumbnailUrls = new Set();
+  const checkedThumbnailUrls = new Set();
   let activeThreadFallbackFetches = 0;
   let settings = loadSettings();
   let scanQueued = false;
@@ -1617,7 +1622,7 @@
   }
 
   function getImageSource(image, baseUrl) {
-    const attributes = ['data-src', 'data-lazy-src', 'data-original', 'src', 'data-url'];
+    const attributes = ['data-url', 'data-full', 'data-src', 'data-lazy-src', 'data-original', 'data-file-url', 'src'];
 
     for (const attribute of attributes) {
       const url = toAbsoluteHttpUrl(image.getAttribute(attribute), baseUrl);
@@ -1625,6 +1630,24 @@
     }
 
     return toAbsoluteHttpUrl(getSrcsetCandidate(image.getAttribute('srcset') || image.getAttribute('data-srcset')), baseUrl);
+  }
+
+  function isLikelyPostImageUrl(url) {
+    const value = String(url || '').toLowerCase();
+    if (!value) return false;
+    if (/\.(?:jpe?g|png|gif|webp)(?:[?#]|$)/i.test(value)) return true;
+    return value.includes('/attachments/') || value.includes('/proxy.php?image=') || value.includes('/proxy.php?url=');
+  }
+
+  function getLinkedImageSource(link, baseUrl) {
+    const attributes = ['data-url', 'data-full', 'data-src', 'data-file-url', 'href'];
+
+    for (const attribute of attributes) {
+      const url = toAbsoluteHttpUrl(link.getAttribute(attribute), baseUrl);
+      if (url && isLikelyPostImageUrl(url.href)) return url;
+    }
+
+    return null;
   }
 
   function getNumericAttribute(node, names) {
@@ -1674,6 +1697,18 @@
         return {
           imageUrl: imageUrl.href,
           ...getImageRatio(image, imageUrl.href),
+        };
+      }
+
+      const imageLinks = scope.querySelectorAll('a[href], a[data-url], a[data-full], a[data-src], a[data-file-url]');
+      for (const link of imageLinks) {
+        const imageUrl = getLinkedImageSource(link, threadUrl);
+        if (!imageUrl || link.closest('.bbCodeBlock--quote')) continue;
+
+        return {
+          imageUrl: imageUrl.href,
+          width: 16,
+          height: 9,
         };
       }
     }
@@ -1750,6 +1785,80 @@
     if (threadUrl) requestThreadFallback(anchor, threadUrl);
   }
 
+  function isMostlyBlankThumbnailImage(image) {
+    const sourceWidth = Number(image?.naturalWidth || image?.width || 0);
+    const sourceHeight = Number(image?.naturalHeight || image?.height || 0);
+    if (!sourceWidth || !sourceHeight) return false;
+
+    const sampleWidth = Math.min(24, sourceWidth);
+    const sampleHeight = Math.min(24, sourceHeight);
+    const canvas = document.createElement('canvas');
+    canvas.width = sampleWidth;
+    canvas.height = sampleHeight;
+
+    try {
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) return false;
+
+      context.drawImage(image, 0, 0, sampleWidth, sampleHeight);
+      const pixels = context.getImageData(0, 0, sampleWidth, sampleHeight).data;
+      let sampledPixels = 0;
+      let totalLuminance = 0;
+      let brightPixels = 0;
+
+      for (let index = 0; index < pixels.length; index += 4) {
+        const alpha = pixels[index + 3];
+        if (alpha <= 8) continue;
+
+        const luminance = (pixels[index] * 299 + pixels[index + 1] * 587 + pixels[index + 2] * 114) / 1000;
+        totalLuminance += luminance;
+        sampledPixels += 1;
+        if (luminance > BLANK_THUMBNAIL_BRIGHT_PIXEL_THRESHOLD) brightPixels += 1;
+      }
+
+      if (!sampledPixels) return true;
+
+      const averageLuminance = totalLuminance / sampledPixels;
+      const brightRatio = brightPixels / sampledPixels;
+      return averageLuminance < BLANK_THUMBNAIL_LUMINANCE_THRESHOLD && brightRatio <= BLANK_THUMBNAIL_MAX_BRIGHT_RATIO;
+    } catch (_error) {
+      // Cross-origin thumbnails can taint the canvas. If we cannot inspect pixels, keep the original thumbnail.
+      return false;
+    }
+  }
+
+  function maybeQueueBlankThumbnailFallback(anchor, url, image) {
+    if (!url || !image) return false;
+
+    if (blankThumbnailUrls.has(url)) {
+      queueThreadFallbackForAnchor(anchor);
+      return true;
+    }
+
+    if (checkedThumbnailUrls.has(url)) return false;
+
+    checkedThumbnailUrls.add(url);
+    if (!isMostlyBlankThumbnailImage(image)) return false;
+
+    blankThumbnailUrls.add(url);
+    queueThreadFallbackForAnchor(anchor);
+    return true;
+  }
+
+  function probeBlankThumbnailFallback(anchor, url) {
+    if (!url || checkedThumbnailUrls.has(url)) return;
+
+    if (blankThumbnailUrls.has(url)) {
+      queueThreadFallbackForAnchor(anchor);
+      return;
+    }
+
+    const probe = new Image();
+    probe.onload = () => maybeQueueBlankThumbnailFallback(anchor, url, probe);
+    probe.onerror = () => checkedThumbnailUrls.add(url);
+    probe.src = url;
+  }
+
   function parseDimsFromUrl(url) {
     if (!url) return null;
     const match = String(url).match(/(?:^|[^\d])(\d{2,5})x(\d{2,5})(?:[^\d]|$)/i);
@@ -1794,6 +1903,7 @@
     if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
       if (image.naturalWidth >= 16 && image.naturalHeight >= 16) {
         applyRatio(anchor, image.naturalWidth, image.naturalHeight, url);
+        maybeQueueBlankThumbnailFallback(anchor, url, image);
         return;
       }
 
@@ -1804,6 +1914,7 @@
     const parsedDims = parseDimsFromUrl(url);
     if (parsedDims) {
       applyRatio(anchor, parsedDims.width, parsedDims.height, url);
+      probeBlankThumbnailFallback(anchor, url);
       return;
     }
 
@@ -1815,6 +1926,7 @@
     if (ratioCache.has(url)) {
       const cached = ratioCache.get(url);
       applyRatio(anchor, cached.width, cached.height, url);
+      if (blankThumbnailUrls.has(url)) queueThreadFallbackForAnchor(anchor);
       return;
     }
 
@@ -1839,7 +1951,10 @@
 
       const ratio = { width, height };
       ratioCache.set(url, ratio);
-      anchors.forEach((pendingAnchor) => applyRatio(pendingAnchor, ratio.width, ratio.height, url));
+      anchors.forEach((pendingAnchor) => {
+        applyRatio(pendingAnchor, ratio.width, ratio.height, url);
+        maybeQueueBlankThumbnailFallback(pendingAnchor, url, probe);
+      });
     };
 
     probe.onload = () => finish(probe.naturalWidth, probe.naturalHeight);
